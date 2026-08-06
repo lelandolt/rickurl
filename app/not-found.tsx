@@ -12,9 +12,9 @@ export default function NotFound() {
             src="/rick-404.png"
             alt="Illustration of Rick Astley singing into a microphone and pointing"
             width={700}
-            height={575}
+            height={560}
             priority
-            className="h-auto w-56 sm:w-72 md:w-full"
+            className="h-auto w-56 rounded-2xl sm:w-72 md:w-full"
           />
         </div>
 

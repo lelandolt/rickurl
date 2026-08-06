@@ -15,7 +15,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "RickURL — The internet's least reliable URL shortener",
+  title: "RickURL",
   description:
     "Create short links with unpredictable outcomes. 50% goes to your link, 50% goes to Rick Astley. Valid for 7 days.",
 }

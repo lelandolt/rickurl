@@ -1,11 +1,15 @@
 import { Logo } from "@/components/logo"
 import { UrlShortener } from "@/components/url-shortener"
 import { FeatureList } from "@/components/feature-list"
+import { RickrollFooter } from "@/components/rickroll-footer"
+
+// The footer reads a live rickroll count, so render on each request.
+export const dynamic = "force-dynamic"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-2xl">
+    <main className="flex min-h-dvh flex-col items-center px-4 py-16">
+      <div className="flex w-full max-w-2xl flex-1 flex-col justify-center">
         <header className="flex flex-col items-center text-center">
           <Logo />
           <p className="mt-4 font-serif text-xl text-foreground text-balance sm:text-2xl">
@@ -20,11 +24,9 @@ export default function HomePage() {
         <div className="mt-8">
           <FeatureList />
         </div>
-
-        <p className="mt-8 text-center text-base font-medium text-muted-foreground text-pretty">
-          Short links. Unpredictable outcomes.
-        </p>
       </div>
+
+      <RickrollFooter />
     </main>
   )
 }
