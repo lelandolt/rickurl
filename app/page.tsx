@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-dvh flex-col items-center px-4 py-16">
+    <main className="flex min-h-dvh flex-col items-center px-4 pt-16 pb-6 sm:pb-16">
       <div className="flex w-full max-w-2xl flex-1 flex-col justify-center">
         <header className="flex flex-col items-center text-center">
           <Logo />
