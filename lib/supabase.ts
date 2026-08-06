@@ -87,12 +87,14 @@ export async function resolveVisit(
 export async function getRickrollCount(): Promise<number> {
   const supabase = getClient()
 
-  const { data, error } = await supabase.from("links").select("rickrolls")
+  // Aggregate in Postgres (single row back) instead of fetching every row and
+  // summing in Node — far less bandwidth and much faster at scale.
+  const { data, error } = await supabase.rpc("total_rickrolls")
 
   if (error) {
     console.error("[v0] rickroll count failed:", error.message)
     return 0
   }
 
-  return (data ?? []).reduce((sum, row) => sum + (row.rickrolls ?? 0), 0)
+  return Number(data ?? 0)
 }
