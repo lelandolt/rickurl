@@ -40,7 +40,7 @@ export default function NotFound() {
             priority
             className="my-3 h-auto w-[92vw] max-w-[30rem] md:hidden"
           />
-          <p className="mt-3 text-sm font-medium text-muted-foreground text-pretty">
+          <p className="mt-3 text-[0.9375rem] font-medium text-muted-foreground text-pretty">
             The link you&apos;re looking for doesn&apos;t exist or has expired.
           </p>
           <Link
