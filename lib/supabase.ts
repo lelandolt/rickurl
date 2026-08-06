@@ -80,15 +80,16 @@ export async function resolveVisit(
 }
 
 /**
- * Returns the total number of successful rickrolls across all links, for the
- * homepage footer counter. Falls back to 0 on any error so the page never
- * fails to render over a stat.
+ * Returns the lifetime number of successful rickrolls, for the homepage footer
+ * counter. Reads a persistent counter that survives the daily purge of expired
+ * links, so the total only ever grows. Falls back to 0 on any error so the
+ * page never fails to render over a stat.
  */
 export async function getRickrollCount(): Promise<number> {
   const supabase = getClient()
 
-  // Aggregate in Postgres (single row back) instead of fetching every row and
-  // summing in Node — far less bandwidth and much faster at scale.
+  // Read the single-row persistent counter via RPC — one value back, no row
+  // scan, and immune to expired-link cleanup.
   const { data, error } = await supabase.rpc("total_rickrolls")
 
   if (error) {
