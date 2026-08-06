@@ -6,7 +6,7 @@ import { Logo } from "@/components/logo"
 export default function NotFound() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-16">
-      <div className="grid w-full max-w-6xl items-center gap-8 md:grid-cols-[1.5fr_1fr] md:gap-12">
+      <div className="grid w-full max-w-6xl items-center gap-8 md:grid-cols-[2.25fr_1fr] md:gap-12">
         <div className="order-1 flex justify-center md:hidden">
           <Logo variant="inline" />
         </div>
@@ -38,7 +38,7 @@ export default function NotFound() {
             width={1536}
             height={1024}
             priority
-            className="my-3 h-auto w-[70vw] max-w-xs md:hidden"
+            className="my-3 h-auto w-[92vw] max-w-[30rem] md:hidden"
           />
           <p className="mt-3 text-lg text-muted-foreground text-pretty">
             The link you&apos;re looking for doesn&apos;t exist or has expired.
