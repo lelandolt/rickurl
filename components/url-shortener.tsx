@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ArrowRight, Link as LinkIcon, Check, Copy, Loader2, RotateCcw } from "lucide-react"
+import { isValidUrl } from "@/lib/validate-url"
 import type { CreateResponse } from "@/lib/types"
 
 type Status = "idle" | "loading" | "success" | "error"
@@ -9,16 +10,18 @@ type Status = "idle" | "loading" | "success" | "error"
 export function UrlShortener() {
   const [url, setUrl] = useState("")
   const [status, setStatus] = useState<Status>("idle")
-  const [error, setError] = useState<string | null>(null)
   const [shortUrl, setShortUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
+  // Basic client-side website check — the Create button only activates when
+  // the input looks like a real URL, so there's no need for an error message.
+  const isValid = isValidUrl(url)
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
-    if (status === "loading") return
+    if (status === "loading" || !isValid) return
 
     setStatus("loading")
-    setError(null)
 
     try {
       const res = await fetch("/api/create", {
@@ -30,8 +33,6 @@ export function UrlShortener() {
       const data = (await res.json()) as CreateResponse
 
       if (!res.ok || !("shortUrl" in data)) {
-        const message = "error" in data ? data.error : "Something went wrong."
-        setError(message)
         setStatus("error")
         return
       }
@@ -39,7 +40,6 @@ export function UrlShortener() {
       setShortUrl(data.shortUrl)
       setStatus("success")
     } catch {
-      setError("Network error. Please try again.")
       setStatus("error")
     }
   }
@@ -58,7 +58,6 @@ export function UrlShortener() {
   function handleReset() {
     setUrl("")
     setShortUrl(null)
-    setError(null)
     setCopied(false)
     setStatus("idle")
   }
@@ -69,9 +68,6 @@ export function UrlShortener() {
     <div className="rounded-2xl border border-border bg-card p-3 shadow-sm sm:p-4">
       {status === "success" && shortUrl ? (
         <div className="flex flex-col gap-3">
-          <p className="px-2 pt-1 text-sm font-medium text-muted-foreground">
-            Your unpredictable link is ready:
-          </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
               <LinkIcon className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
@@ -127,7 +123,7 @@ export function UrlShortener() {
           </div>
           <button
             type="submit"
-            disabled={isLoading || url.trim().length === 0}
+            disabled={isLoading || !isValid}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-colors hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading ? (
@@ -142,12 +138,6 @@ export function UrlShortener() {
           </button>
         </form>
       )}
-
-      {status === "error" && error ? (
-        <p role="alert" className="px-2 pb-1 pt-3 text-sm font-medium text-primary">
-          {error}
-        </p>
-      ) : null}
     </div>
   )
 }

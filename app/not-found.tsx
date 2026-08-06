@@ -9,12 +9,12 @@ export default function NotFound() {
       <div className="grid w-full max-w-4xl items-center gap-8 md:grid-cols-2 md:gap-12">
         <div className="order-2 flex justify-center md:order-1">
           <Image
-            src="/rick-sticker.png"
+            src="/rick-404.png"
             alt="Illustration of Rick Astley singing into a microphone and pointing"
-            width={420}
-            height={420}
+            width={700}
+            height={575}
             priority
-            className="h-auto w-64 sm:w-80 md:w-full"
+            className="h-auto w-56 sm:w-72 md:w-full"
           />
         </div>
 

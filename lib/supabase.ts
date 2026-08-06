@@ -78,3 +78,21 @@ export async function resolveVisit(
   const row = Array.isArray(data) ? data[0] : data
   return row?.destination ?? null
 }
+
+/**
+ * Returns the total number of successful rickrolls across all links, for the
+ * homepage footer counter. Falls back to 0 on any error so the page never
+ * fails to render over a stat.
+ */
+export async function getRickrollCount(): Promise<number> {
+  const supabase = getClient()
+
+  const { data, error } = await supabase.from("links").select("rickrolls")
+
+  if (error) {
+    console.error("[v0] rickroll count failed:", error.message)
+    return 0
+  }
+
+  return (data ?? []).reduce((sum, row) => sum + (row.rickrolls ?? 0), 0)
+}
