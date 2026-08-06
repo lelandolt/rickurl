@@ -6,7 +6,7 @@ import { Logo } from "@/components/logo"
 export default function NotFound() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-16">
-      <div className="grid w-full max-w-4xl items-center gap-8 md:grid-cols-2 md:gap-12">
+      <div className="grid w-full max-w-6xl items-center gap-8 md:grid-cols-[1.5fr_1fr] md:gap-12">
         <div className="order-1 flex justify-center md:hidden">
           <Logo variant="inline" />
         </div>
@@ -18,7 +18,7 @@ export default function NotFound() {
             width={1536}
             height={1024}
             priority
-            className="h-auto w-96 sm:w-[30rem] md:w-full"
+            className="h-auto w-[85vw] max-w-[34rem] sm:w-[34rem] md:w-full md:max-w-none"
           />
         </div>
 
