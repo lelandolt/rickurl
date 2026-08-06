@@ -1,32 +1,39 @@
 /**
- * Normalizes and validates a user-supplied URL.
- *
- * - Accepts input with or without a protocol (defaults to https://).
- * - Only allows http/https schemes.
- * - Returns the normalized absolute URL string, or null if invalid.
+ * Prepends https:// when the input has no protocol so the stored destination
+ * is always an absolute URL. Best-effort — assumes the value already passed
+ * the client-side `isValidUrl` check.
  */
-export function validateUrl(input: string): string | null {
+export function normalizeUrl(input: string): string {
   const trimmed = input.trim()
-  if (!trimmed) return null
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
 
-  // Prepend a protocol if the user omitted one (e.g. "example.com").
+  try {
+    return new URL(withProtocol).toString()
+  } catch {
+    return withProtocol
+  }
+}
+
+/**
+ * Basic "does this look like a website" check used on the client to enable the
+ * Create button. Accepts input with or without a protocol and requires a
+ * dotted hostname (e.g. "example.com"), rejecting bare words like "hello".
+ */
+export function isValidUrl(input: string): boolean {
+  const trimmed = input.trim()
+  if (!trimmed) return false
+
   const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
 
   let parsed: URL
   try {
     parsed = new URL(withProtocol)
   } catch {
-    return null
+    return false
   }
 
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    return null
-  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false
 
-  // Require a dot in the hostname so bare words ("hello") are rejected.
-  if (!parsed.hostname.includes(".")) {
-    return null
-  }
-
-  return parsed.toString()
+  // Require a dot with a non-empty label on each side (e.g. "a.b").
+  return /^[^\s.]+\.[^\s.]+/.test(parsed.hostname)
 }

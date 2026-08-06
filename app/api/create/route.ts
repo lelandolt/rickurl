@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { validateUrl } from "@/lib/validate-url"
+import { normalizeUrl } from "@/lib/validate-url"
 import { createLink } from "@/lib/supabase"
 import type { CreateRequestBody, CreateResponse } from "@/lib/types"
 
@@ -12,15 +12,10 @@ export async function POST(request: Request): Promise<NextResponse<CreateRespons
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  // Validate the incoming URL on the server. The client never generates slugs
-  // and never trusts input — everything is checked here.
-  const normalized = validateUrl(body?.url ?? "")
-  if (!normalized) {
-    return NextResponse.json(
-      { error: "Please enter a valid URL." },
-      { status: 400 },
-    )
-  }
+  // The client gates the Create button on a basic website check, so validation
+  // lives there. Here we only normalize (prepend https:// when missing) so the
+  // stored destination is always a usable absolute URL.
+  const normalized = normalizeUrl(body?.url ?? "")
 
   // Persist the link. `createLink` generates a unique random slug (retrying on
   // collision) and stores the destination with a 7-day expiry.

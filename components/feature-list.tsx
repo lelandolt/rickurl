@@ -7,7 +7,7 @@ interface Feature {
 
 export function FeatureList() {
   return (
-    <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-medium text-foreground">
+    <ul className="flex flex-col items-center justify-center gap-3 text-sm font-medium text-foreground sm:flex-row sm:gap-x-6">
       <FeatureItem icon={Dices} label="50% goes to your link" />
       <Divider />
       {/* Rick Astley gets his own item with a custom mark. */}
