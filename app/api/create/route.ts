@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { validateUrl } from "@/lib/validate-url"
-import { generateSlug } from "@/lib/slug"
+import { createLink } from "@/lib/supabase"
 import type { CreateRequestBody, CreateResponse } from "@/lib/types"
 
 export async function POST(request: Request): Promise<NextResponse<CreateResponse>> {
@@ -22,16 +22,18 @@ export async function POST(request: Request): Promise<NextResponse<CreateRespons
     )
   }
 
-  const slug = generateSlug()
-
-  // TODO: Once Supabase is connected, this endpoint will:
-  //   1. Validate the URL (done above).
-  //   2. Generate a unique random slug, retrying on collision.
-  //   3. Store { slug, destination: normalized, expires_at: now + 7 days } in
-  //      the Supabase `links` table.
-  //   4. Return the generated RickURL pointing at that slug.
-  //
-  // For now we return a mocked response using the generated slug.
+  // Persist the link. `createLink` generates a unique random slug (retrying on
+  // collision) and stores the destination with a 7-day expiry.
+  let slug: string
+  try {
+    slug = await createLink(normalized)
+  } catch (err) {
+    console.error("[v0] create link failed:", err)
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 },
+    )
+  }
 
   const origin = new URL(request.url).origin
   const shortUrl = `${origin}/${slug}`
