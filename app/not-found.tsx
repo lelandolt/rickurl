@@ -11,14 +11,14 @@ export default function NotFound() {
           <Logo variant="inline" />
         </div>
 
-        <div className="order-2 flex justify-center md:order-1">
+        <div className="order-2 hidden justify-center md:order-1 md:flex">
           <Image
             src="/rick-404.png"
             alt="Illustration of Rick Astley singing into a microphone and pointing"
             width={1536}
             height={1024}
             priority
-            className="h-auto w-[85vw] max-w-[34rem] sm:w-[34rem] md:w-full md:max-w-none"
+            className="h-auto w-full"
           />
         </div>
 
@@ -32,6 +32,14 @@ export default function NotFound() {
           <h2 className="mt-2 font-serif text-3xl font-bold tracking-tight text-foreground text-balance sm:text-4xl">
             Never gonna find that page.
           </h2>
+          <Image
+            src="/rick-404.png"
+            alt="Illustration of Rick Astley singing into a microphone and pointing"
+            width={1536}
+            height={1024}
+            priority
+            className="my-3 h-auto w-[70vw] max-w-xs md:hidden"
+          />
           <p className="mt-3 text-lg text-muted-foreground text-pretty">
             The link you&apos;re looking for doesn&apos;t exist or has expired.
           </p>
