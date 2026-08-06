@@ -7,7 +7,11 @@ export default function NotFound() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-16">
       <div className="grid w-full max-w-4xl items-center gap-8 md:grid-cols-2 md:gap-12">
-        <div className="order-1 flex justify-center md:order-1">
+        <div className="order-1 flex justify-center md:hidden">
+          <Logo variant="inline" />
+        </div>
+
+        <div className="order-2 flex justify-center md:order-1">
           <Image
             src="/rick-404.png"
             alt="Illustration of Rick Astley singing into a microphone and pointing"
@@ -18,8 +22,10 @@ export default function NotFound() {
           />
         </div>
 
-        <div className="order-2 flex flex-col items-center text-center md:order-2 md:items-start md:text-left">
-          <Logo variant="inline" />
+        <div className="order-3 flex flex-col items-center text-center md:order-2 md:items-start md:text-left">
+          <div className="hidden md:block">
+            <Logo variant="inline" />
+          </div>
           <p className="mt-2 font-serif text-8xl font-bold leading-none tracking-tight text-foreground">
             404
           </p>
