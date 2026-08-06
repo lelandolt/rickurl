@@ -16,8 +16,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "RickURL",
-  description:
-    "Create short links with unpredictable outcomes. 50% goes to your link, 50% goes to Rick Astley. Valid for 7 days.",
+  description: "Sometimes it redirects. Sometimes it rickdirects.",
 }
 
 export const viewport: Viewport = {
