@@ -13,10 +13,7 @@ export interface ErrorResponse {
 export type CreateResponse = CreateSuccessResponse | ErrorResponse
 
 /**
- * Shape of a stored link.
- *
- * TODO: This will map to the Supabase `links` table once the database
- * integration is added:
+ * Shape of a stored link, mapping to the Supabase `links` table:
  *   - slug         text primary key
  *   - destination  text not null
  *   - created_at   timestamptz default now()

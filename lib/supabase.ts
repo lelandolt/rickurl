@@ -1,22 +1,80 @@
-/**
- * Placeholder for the future Supabase client.
- *
- * When the Supabase integration is added, this file will export a configured
- * client, e.g.:
- *
- *   import { createClient } from "@supabase/supabase-js"
- *
- *   export const supabase = createClient(
- *     process.env.NEXT_PUBLIC_SUPABASE_URL!,
- *     process.env.SUPABASE_SERVICE_ROLE_KEY!,
- *   )
- *
- * Keeping the client isolated here means the API routes can import a single
- * source of truth and the rest of the app never touches the database directly.
- *
- * TODO: Install @supabase/supabase-js and implement the client above.
- * TODO: Add helper functions such as `createLink(slug, destination)` and
- *       `getLink(slug)` so route handlers stay thin.
- */
+import "server-only"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
+import { generateSlug } from "@/lib/slug"
 
-export {}
+/**
+ * Server-only Supabase client using the service-role key.
+ *
+ * The `links` table has RLS enabled with no anon/authenticated policies, so it
+ * is completely inaccessible from the browser. All reads and writes go through
+ * this privileged client, which bypasses RLS — hence the `import "server-only"`
+ * guard to guarantee this module never ships to the client bundle.
+ */
+let client: SupabaseClient | null = null
+
+function getClient(): SupabaseClient {
+  if (client) return client
+
+  const url = process.env.SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!url || !serviceKey) {
+    throw new Error("Supabase environment variables are not configured.")
+  }
+
+  client = createClient(url, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+  return client
+}
+
+const MAX_SLUG_ATTEMPTS = 5
+
+/**
+ * Inserts a new link, generating a fresh random slug and retrying on the rare
+ * chance of a primary-key collision. Returns the slug that was stored.
+ * `expires_at` defaults to now + 7 days in the database.
+ */
+export async function createLink(destination: string): Promise<string> {
+  const supabase = getClient()
+
+  for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt++) {
+    const slug = generateSlug()
+    const { error } = await supabase.from("links").insert({ slug, destination })
+
+    if (!error) return slug
+
+    // 23505 = unique_violation: slug already taken, try another.
+    if (error.code === "23505") continue
+
+    throw new Error(`Failed to create link: ${error.message}`)
+  }
+
+  throw new Error("Could not generate a unique slug after several attempts.")
+}
+
+/**
+ * Atomically records a visit and returns the stored destination.
+ *
+ * The 50/50 rickroll coin flip is decided here so the same call that resolves
+ * the destination also increments the correct analytics counter. Returns null
+ * when the slug does not exist or has expired.
+ */
+export async function resolveVisit(
+  slug: string,
+  rickroll: boolean,
+): Promise<string | null> {
+  const supabase = getClient()
+
+  const { data, error } = await supabase.rpc("record_visit", {
+    p_slug: slug,
+    p_rickroll: rickroll,
+  })
+
+  if (error) {
+    throw new Error(`Failed to resolve link: ${error.message}`)
+  }
+
+  const row = Array.isArray(data) ? data[0] : data
+  return row?.destination ?? null
+}
