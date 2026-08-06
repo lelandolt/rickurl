@@ -86,6 +86,21 @@ as $$
   select coalesce((select rickrolls from public.lifetime_stats where id = true), 0)::bigint;
 $$;
 
+-- Increment the lifetime rickroll counter by one and return the new total.
+-- Used when someone clicks the footer "Learn more" rickroll link, which is a
+-- rickroll not tied to any specific short link.
+create or replace function public.bump_rickrolls()
+returns bigint
+language sql
+security definer
+set search_path = ''
+as $$
+  update public.lifetime_stats
+     set rickrolls = rickrolls + 1
+   where id = true
+  returning rickrolls;
+$$;
+
 -- ---------------------------------------------------------------------------
 -- Scheduled cleanup (pg_cron)
 -- ---------------------------------------------------------------------------
