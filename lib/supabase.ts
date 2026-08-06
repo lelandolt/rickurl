@@ -99,3 +99,21 @@ export async function getRickrollCount(): Promise<number> {
 
   return Number(data ?? 0)
 }
+
+/**
+ * Increments the lifetime rickroll counter by one and returns the new total.
+ * Used when someone clicks the footer rickroll link — a rickroll that isn't
+ * tied to any specific short link.
+ */
+export async function bumpRickrollCount(): Promise<number> {
+  const supabase = getClient()
+
+  const { data, error } = await supabase.rpc("bump_rickrolls")
+
+  if (error) {
+    console.error("[v0] rickroll bump failed:", error.message)
+    throw new Error("Failed to record rickroll.")
+  }
+
+  return Number(data ?? 0)
+}
