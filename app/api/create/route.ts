@@ -30,8 +30,10 @@ export async function POST(request: Request): Promise<NextResponse<CreateRespons
     )
   }
 
-  const origin = new URL(request.url).origin
-  const shortUrl = `${origin}/${slug}`
+  // Always hand back the canonical apex domain (no www), regardless of which
+  // host the request actually came in on (preview URL, www, etc.).
+  const base = (process.env.NEXT_PUBLIC_SHORT_URL_BASE ?? "https://rickurl.com").replace(/\/+$/, "")
+  const shortUrl = `${base}/${slug}`
 
   return NextResponse.json({ shortUrl }, { status: 201 })
 }
